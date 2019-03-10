@@ -2,9 +2,28 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
 type Query {
-    launches: [Launch]!
+    launches(
+        """
+        The number of results to show. Must be >= 1. Default = 20
+        """
+        pageSize: Int
+        """
+        If you add a corsor here. it will only return results _afer_ this cursor
+        """
+        after: String
+    ): LaunchConnection!
     launch(id: ID!): Launch
     me: User
+}
+"""
+Simple wraper around our list of launches that contains a cursor to the
+last time in the list. Pass this cursor to the launches query to fetch results
+after these.
+"""
+type LaunchConnection {
+    cursor: String!
+    hasMore: Boolean!
+    launches: [Launch]!
 }
 
 type Launch {
@@ -29,7 +48,7 @@ type User {
 
 type Mission {
     name: String
-    misionPatch(size: PatchSize): String
+    missionPatch(size: PatchSize): String
 }
 
 enum PatchSize {
@@ -40,7 +59,7 @@ enum PatchSize {
 type Mutation {
     bookTrips(launchIds: [ID]!): TripUpdateResponse!
     cancleTrip(launchId: ID): TripUpdateResponse!
-    login(emial: String): String
+    login(email: String): String
 }
 
 type TripUpdateResponse {

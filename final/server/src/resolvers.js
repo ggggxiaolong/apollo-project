@@ -65,6 +65,7 @@ module.exports = {
     },
     login: async (_, { email }, { dataSources }) => {
       const user = await dataSources.userAPI.findOrCreateUser({ email });
+      console.log(`mail: ${email}, user: ${user}`)
       if (user) return new Buffer(email).toString('base64');
     },
   },
